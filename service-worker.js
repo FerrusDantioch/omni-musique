@@ -15,7 +15,7 @@
  *   et lus directement depuis l'appareil.
  */
 
-const CACHE_NAME = "omni-musique-v1.0.0";
+const CACHE_NAME = "omni-musique-v1.0.1";
 const CACHE_PREFIX = "omni-musique-";
 
 const APP_SHELL = [
@@ -24,31 +24,11 @@ const APP_SHELL = [
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-maskable-512.png",
-  "./icons/apple-touch-icon.png"
-];
-
-const LIBRARIES = [
-  "https://fonts.googleapis.com/css2?family=Oxanium:wght@500;600;700&display=swap"
-];
-
-/* Sites externes dont les réponses peuvent être gardées en cache. */
-const CACHED_HOSTS = [
-  "fonts.googleapis.com",
-  "fonts.gstatic.com"
+  "./icons/apple-touch-icon.png",
+  "./polices/oxanium.woff2"
 ];
 
 const NAVIGATION_TIMEOUT = 4000;
-
-async function fetchExternal(request) {
-  const url = typeof request === "string" ? request : request.url;
-
-  try {
-    // Réponse « cors » lisible plutôt qu'opaque : elle occupe moins de quota.
-    return await fetch(url, { mode: "cors", credentials: "omit" });
-  } catch (error) {
-    return fetch(request, { mode: "no-cors", credentials: "omit" });
-  }
-}
 
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
@@ -57,13 +37,6 @@ self.addEventListener("install", event => {
     await cache.addAll(
       APP_SHELL.map(url => new Request(url, { cache: "reload" }))
     );
-
-    await Promise.allSettled(LIBRARIES.map(async url => {
-      const response = await fetchExternal(url);
-      if (response.ok || response.type === "opaque") {
-        await cache.put(url, response);
-      }
-    }));
   })());
 });
 
@@ -98,8 +71,8 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  if (sameOrigin || CACHED_HOSTS.includes(url.hostname)) {
-    event.respondWith(cacheFirst(request, sameOrigin));
+  if (sameOrigin) {
+    event.respondWith(cacheFirst(request));
   }
 });
 
@@ -131,15 +104,15 @@ async function cachedPage(request) {
   }
 }
 
-async function cacheFirst(request, sameOrigin) {
+async function cacheFirst(request) {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(request, { ignoreVary: true });
 
   if (cached) return cached;
 
-  const response = sameOrigin ? await fetch(request) : await fetchExternal(request);
+  const response = await fetch(request);
 
-  if (response.ok || response.type === "opaque") {
+  if (response.ok) {
     await cache.put(request, response.clone());
   }
 
