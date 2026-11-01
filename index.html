@@ -32,11 +32,18 @@
     }());
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;600;700&display=swap" rel="stylesheet">
 
   <style>
+    /* Police des titres, copiée dans le dossier polices/ : aucun appel à
+       Internet, elle marche aussi hors ligne dès la première visite. */
+    @font-face {
+      font-family: "Oxanium";
+      src: url("polices/oxanium.woff2") format("woff2");
+      font-weight: 200 800;
+      font-style: normal;
+      font-display: swap;
+    }
+
     /* ============================================================
        THÈMES ET BASE
        ============================================================ */
@@ -1100,6 +1107,7 @@
       <p>© 2026 Ferrus Dantioch. Omni-Musique est publiée sous licence
         <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.fr" target="_blank" rel="noopener">Creative Commons BY-NC-ND 4.0</a> :
         vous pouvez la partager librement en citant son auteur, mais pas la vendre ni la modifier.</p>
+      <p><small>Police des titres : Oxanium, sous sa propre licence, la SIL Open Font License 1.1 (fichier polices/LICENCE-OFL.txt).</small></p>
       <p>Vos fichiers audio restent sur cet appareil : rien n’est envoyé sur Internet. Gardez vos fichiers d’origine ailleurs, car effacer les données du navigateur efface aussi la bibliothèque.</p>
       <a class="secondary-button wide-button" href="https://ferrusdantioch.github.io/omni-systeme/#applications" target="_blank" rel="noopener">Découvrir les autres applications Omni</a>
       <div class="modal-actions">
@@ -1138,7 +1146,7 @@
     /* ============================================================
        CONSTANTES ET OUTILS
        ============================================================ */
-    const APP_VERSION = "1.0.0";
+    const APP_VERSION = "1.0.1";
     const $ = id => document.getElementById(id);
 
     const CATEGORY_NAMES = { music: "Musique", podcast: "Podcasts", book: "Livres audio" };

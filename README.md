@@ -46,6 +46,8 @@ entièrement hors ligne.
 | `service-worker.js` | Garde l'application en mémoire pour qu'elle marche sans Internet |
 | `manifest.webmanifest` | Nom et icônes pour installer l'application sur l'écran d'accueil |
 | `icons/` | Les icônes de l'application |
+| `polices/` | La police des titres (Oxanium) et sa licence |
+| `tests/` | Les tests automatiques (voir plus bas) |
 | `LICENSE` | La licence du code |
 
 Les fichiers audio ne sont jamais envoyés sur Internet : ils sont rangés dans
@@ -67,6 +69,29 @@ même valeur :
 L'application affiche alors « Nouvelle version disponible » ; la mise à jour
 se fait d'un appui sur « Mettre à jour », sans couper l'écoute avant cet
 appui.
+
+## Tests automatiques
+
+Les tests ouvrent l’application dans un vrai navigateur, font les gestes
+d’une personne et vérifient le résultat, y compris sans internet. Ils ne
+contactent aucun site. Ils ne servent qu’au développement : l’application
+n’en a pas besoin pour fonctionner.
+
+Il faut [Node.js](https://nodejs.org) (version 22 ou plus récente), puis,
+une seule fois, dans le dossier de l’application :
+
+```
+npm install playwright
+npx playwright install chromium
+```
+
+Ensuite, à chaque fois :
+
+```
+node tests/tester.js
+```
+
+Le bilan s’affiche à la fin : « Échecs : 0 » veut dire que tout va bien.
 
 ## Droits et licence
 
