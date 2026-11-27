@@ -2,30 +2,31 @@
 
 /*
  * Service worker d'Omni-Musique : rend l'application utilisable hors ligne.
- *
- * - La page (index.html, qui contient tout le code) est servie depuis la
- *   copie en cache de CETTE version : elle n'est demandée au réseau que si
- *   la copie manque (toute première visite).
- * - À chaque nouvelle version, changez le numéro de CACHE_NAME (et
- *   APP_VERSION dans index.html) : l'application affiche alors « Nouvelle
- *   version disponible » et la mise à jour se fait d'un appui, sans couper
- *   l'écoute en cours. Rien ne change avant cet appui.
- * - La police des titres et les icônes sont servies depuis le cache.
- * - Les fichiers audio ne passent jamais par ici : ils sont dans IndexedDB
- *   et lus directement depuis l'appareil.
  */
 
-const CACHE_NAME = "omni-musique-v1.0.1";
+const CACHE_NAME = "omni-musique-v1.1.0";
 const CACHE_PREFIX = "omni-musique-";
 
 const APP_SHELL = [
   "./",
+  "./index.html",
+  "./style.css",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-maskable-512.png",
   "./icons/apple-touch-icon.png",
-  "./polices/oxanium.woff2"
+  "./polices/oxanium.woff2",
+  "./polices/literata.woff2",
+  "./js/theme-init.js",
+  "./js/utils.js",
+  "./js/parsers.js",
+  "./js/db.js",
+  "./js/covers.js",
+  "./js/layers.js",
+  "./js/player.js",
+  "./js/ui.js",
+  "./js/app.js"
 ];
 
 const NAVIGATION_TIMEOUT = 4000;
@@ -40,7 +41,6 @@ self.addEventListener("install", event => {
   })());
 });
 
-/* Appui sur « Mettre à jour » : la nouvelle version remplace l'ancienne. */
 self.addEventListener("message", event => {
   if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
 });
@@ -110,11 +110,18 @@ async function cacheFirst(request) {
 
   if (cached) return cached;
 
-  const response = await fetch(request);
+  try {
+    const response = await fetch(request);
 
-  if (response.ok) {
-    await cache.put(request, response.clone());
+    if (response.ok) {
+      await cache.put(request, response.clone());
+    }
+
+    return response;
+  } catch (error) {
+    return new Response(
+      "Ressource indisponible hors ligne.",
+      { status: 503, headers: { "Content-Type": "text/plain; charset=utf-8" } }
+    );
   }
-
-  return response;
 }

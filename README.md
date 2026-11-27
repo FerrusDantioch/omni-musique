@@ -42,12 +42,14 @@ entièrement hors ligne.
 
 | Fichier | Rôle |
 |---|---|
-| `index.html` | Toute l'application : textes, mise en page et code |
+| `index.html` | Structure HTML, icônes SVG et dialogues |
+| `style.css` | Styles, thèmes (Nuit, Sombre, Clair) et polices locales |
+| `js/` | Modules ES : parseurs binaires, IndexedDB, pochettes, couches, lecteur, interface |
 | `service-worker.js` | Garde l'application en mémoire pour qu'elle marche sans Internet |
 | `manifest.webmanifest` | Nom et icônes pour installer l'application sur l'écran d'accueil |
 | `icons/` | Les icônes de l'application |
-| `polices/` | La police des titres (Oxanium) et sa licence |
-| `tests/` | Les tests automatiques (voir plus bas) |
+| `polices/` | Les polices Oxanium et Literata et leur licence |
+| `tests/` | Les tests unitaires, statiques et E2E |
 | `LICENSE` | La licence du code |
 
 Les fichiers audio ne sont jamais envoyés sur Internet : ils sont rangés dans
@@ -63,8 +65,8 @@ racine.
 À chaque nouvelle version, changez **les deux** numéros de version, avec la
 même valeur :
 
-- `CACHE_NAME` dans `service-worker.js` (exemple : `omni-musique-v1.0.1`) ;
-- `APP_VERSION` dans `index.html` (exemple : `1.0.1`).
+- `CACHE_NAME` dans `service-worker.js` (exemple : `omni-musique-v1.1.0`) ;
+- `APP_VERSION` dans `js/utils.js` (exemple : `1.1.0`).
 
 L'application affiche alors « Nouvelle version disponible » ; la mise à jour
 se fait d'un appui sur « Mettre à jour », sans couper l'écoute avant cet
@@ -72,22 +74,25 @@ appui.
 
 ## Tests automatiques
 
-Les tests ouvrent l’application dans un vrai navigateur, font les gestes
-d’une personne et vérifient le résultat, y compris sans internet. Ils ne
-contactent aucun site. Ils ne servent qu’au développement : l’application
-n’en a pas besoin pour fonctionner.
+Les tests vérifient les parseurs binaires, les contrôles statiques (dont les
+contrastes WCAG 2.1 AA) et ouvrent l’application dans un vrai navigateur pour
+tester la bibliothèque, le lecteur et le mode hors ligne. Ils ne contactent
+aucun site. Ils ne servent qu’au développement : l’application n’en a pas
+besoin pour fonctionner.
 
 Il faut [Node.js](https://nodejs.org) (version 22 ou plus récente), puis,
 une seule fois, dans le dossier de l’application :
 
 ```
-npm install playwright
+npm install --no-save playwright
 npx playwright install chromium
 ```
 
 Ensuite, à chaque fois :
 
 ```
+node tests/unit.test.mjs
+node tests/verifier-statique.mjs
 node tests/tester.js
 ```
 
@@ -101,3 +106,5 @@ En clair : le partage est autorisé, à l'identique et en citant l'auteur ;
 l'usage commercial est interdit ; la modification et les œuvres dérivées sont
 interdites. Le logiciel est fourni « en l'état », sans aucune garantie.
 Texte complet dans le fichier [LICENSE](LICENSE).
+
+Contact : `omni-systeme.choking513@passmail.net`
